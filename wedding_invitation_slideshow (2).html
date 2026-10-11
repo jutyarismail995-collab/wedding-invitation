@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ئاهەنگی دێرین و هاشم - Derin & Hashim</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            light: '#f9e7b9',
+                            DEFAULT: '#d4af37',
+                            dark: '#aa820a',
+                        },
+                        burgundy: '#58111a',
+                        cream: '#fdfbf7',
+                    },
+                    fontFamily: {
+                        kurdish: ['Noto Naskh Arabic', 'serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Naskh Arabic', serif;
+            background-color: #12090c;
+            color: #fdfbf7;
+            overflow-x: hidden;
+        }
+        
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff3d1 0%, #d4af37 50%, #aa820a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border {
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(35, 18, 25, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Slide animations */
+        .slide {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            transform: scale(0.96);
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            position: relative;
+        }
+
+        /* Floating spark animations */
+        @keyframes floatSpark {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .spark {
+            position: absolute;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.8) 0%, rgba(212, 175, 55, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatSpark 8s infinite linear;
+        }
+
+        /* Pulse heartbeat animation */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.4)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 18px rgba(212, 175, 55, 0.8)); }
+        }
+
+        .heart-pulse {
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        /* Progress bar animation */
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .progress-running {
+            animation: progress 6s linear forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center relative select-none">
+
+    <div id="sparks-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+    
+    <!-- Background Vignette & Gradient overlay -->
+    <div class="fixed inset-0 bg-radial-gradient pointer-events-none z-0" style="background: radial-gradient(circle at center, rgba(88, 17, 26, 0.3) 0%, rgba(18, 9, 12, 0.95) 80%);"></div>
+
+    <!-- Header / Navigation Bar -->
+    <header class="w-full max-w-4xl px-6 py-4 flex justify-between items-center z-20 relative">
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <span class="text-gold text-xl"><i class="fa-solid font-serif text-2xl text-gold">💍</i></span>
+            <span class="text-xs sm:text-sm font-semibold tracking-wider text-gold-light opacity-90">ئاهەنگی دەستگیرانداری</span>
+        </div>
+
+        <!-- Audio toggle button -->
+        <button id="music-btn" onclick="toggleMusic()" class="flex items-center gap-2 px-3 py-1.5 rounded-full glass-card text-gold hover:bg-gold/10 transition border border-gold/30 text-xs sm:text-sm">
+            <i id="music-icon" class="fa-solid fa-music"></i>
+            <span id="music-text">دەنگ</span>
+        </button>
+    </header>
+
+    <!-- Main Container / Slideshow Frame -->
+    <main class="w-full max-w-3xl px-4 my-auto z-10 relative flex-1 flex flex-col justify-center">
+        
+        <!-- Outer Frame with decorative border -->
+        <div class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden min-h-[500px] flex flex-col justify-between shadow-2xl">
+            
+            <!-- Top Progress Bar -->
+            <div class="w-full bg-white/10 h-1 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-gold/40 via-gold to-gold-light transition-all"></div>
+            </div>
+
+            <!-- SLIDES WRAPPER -->
+            <div class="relative flex-1 flex items-center justify-center">
+
+                <!-- SLIDE 1: WELCOME SLIDE -->
+                <section id="slide-0" class="slide active flex flex-col items-center justify-center text-center space-y-6">
+                    <div class="heart-pulse text-gold my-2">
+                        <i class="fa-solid fa-heart text-5xl sm:text-6xl text-gold/90"></i>
+                    </div>
+
+                    <p class="text-gold-light/80 text-sm sm:text-base tracking-widest font-light">بەناوی خوای بەخشندە و میهرەبان</p>
+                    
+                    <h1 class="text-3xl sm:text-5xl font-bold leading-relaxed gold-gradient-text px-2">
+                        بەخێربێن بۆ ئاهەنگی<br/>
+                        <span class="text-4xl sm:text-6xl block mt-2 font-extrabold tracking-wide">دێرین & هاشم</span>
+                    </h1>
+
+                    <div class="w-24 h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent my-3"></div>
+
+                    <p class="text-sm sm:text-lg text-cream/90 max-w-md font-light leading-loose">
+                        زۆر خۆشحال دەبین بە ئامادەبوونتان و بەشداری کردنتان لە خۆشییەکانماندا.
+                    </p>
+
+                    <div class="pt-2">
+                        <span class="inline-block px-4 py-1.5 rounded-full text-xs text-gold/90 border border-gold/30 bg-gold/5">
+                            سەرەتای ژیانێکی نوێ ✨
+                        </span>
+                    </div>
+                </section>
+
+                <!-- SLIDE 2: PHOTO SLIDE -->
+                <section id="slide-1" class="slide flex flex-col items-center justify-center text-center space-y-4">
+                    <h2 class="text-xl sm:text-2xl font-semibold gold-gradient-text">وێنەی ئاهەنگەکە</h2>
+                    
+                    <!-- Frame for Photo -->
+                    <div class="relative group w-64 h-64 sm:w-72 sm:h-72 rounded-2xl overflow-hidden gold-border shadow-xl p-2 bg-burgundy/40">
+                        <div class="w-full h-full rounded-xl overflow-hidden relative flex items-center justify-center bg-black/40">
+                            <img id="wedding-photo" 
+                                 src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800" 
+                                 alt="وێنەی ئاهەنگ" 
+                                 class="w-full h-full object-cover transition duration-700 hover:scale-105"
+                                 onerror="this.src='https://placehold.co/600x600/3a0d15/d4af37?text=Derin+%26+Hashim'" />
+                        </div>
+                    </div>
+
+                    <!-- Custom Photo Upload option -->
+                    <div class="pt-2">
+                        <label for="photo-input" class="cursor-pointer text-xs text-gold-light/80 hover:text-gold bg-gold/10 hover:bg-gold/20 border border-gold/30 px-3 py-1.5 rounded-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-camera"></i>
+                            <span>گۆڕینی وێنە (دڵخوازانە)</span>
+                        </label>
+                        <input type="file" id="photo-input" accept="image/*" class="hidden" onchange="loadUserPhoto(event)">
+                    </div>
+                </section>
+
+                <!-- SLIDE 3: LOCATION AND TIME -->
+                <section id="slide-2" class="slide flex flex-col items-center justify-center text-center space-y-5">
+                    <h2 class="text-2xl sm:text-3xl font-bold gold-gradient-text">کاتی ئاهەنگ و شوێن</h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg my-2">
+                        
+                        <!-- Location Card -->
+                        <div class="p-4 rounded-xl glass-card flex flex-col items-center text-center space-y-2 border border-gold/20">
+                            <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold text-lg">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <span class="text-xs text-gold-light/70 font-light">شوێن</span>
+                            <p class="font-bold text-sm sm:text-base text-cream">گوندی کارێزەی حەمە کەیفە</p>
+                        </div>
+
+                        <!-- Time & Date Card -->
+                        <div class="p-4 rounded-xl glass-card flex flex-col items-center text-center space-y-2 border border-gold/20">
+                            <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold text-lg">
+                                <i class="fa-regular fa-calendar-check"></i>
+                            </div>
+                            <span class="text-xs text-gold-light/70 font-light">بەروار و کات</span>
+                            <p class="font-bold text-sm sm:text-base text-cream">١٢ - ٦ - ٢٠٢٦</p>
+                            <p class="text-xs text-gold">کاتژمێر ٧:٠٠ی ئێوارە</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Countdown Timer -->
+                    <div class="w-full max-w-lg p-3 rounded-xl bg-black/30 border border-gold/20">
+                        <p class="text-xs text-gold-light/70 mb-2">ماوە بۆ ئاهەنگ</p>
+                        <div id="countdown" class="flex justify-center items-center gap-4 text-center dir-ltr">
+                            <div>
+                                <span id="cd-days" class="text-xl font-bold text-gold">00</span>
+                                <span class="block text-[10px] text-cream/70">ڕۆژ</span>
+                            </div>
+                            <span class="text-gold/50">:</span>
+                            <div>
+                                <span id="cd-hours" class="text-xl font-bold text-gold">00</span>
+                                <span class="block text-[10px] text-cream/70">کاتژمێر</span>
+                            </div>
+                            <span class="text-gold/50">:</span>
+                            <div>
+                                <span id="cd-minutes" class="text-xl font-bold text-gold">00</span>
+                                <span class="block text-[10px] text-cream/70">خولەک</span>
+                            </div>
+                            <span class="text-gold/50">:</span>
+                            <div>
+                                <span id="cd-seconds" class="text-xl font-bold text-gold">00</span>
+                                <span class="block text-[10px] text-cream/70">چرکە</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map Location Button -->
+                    <a href="https://maps.google.com/?q=Karizay+Hama+Kaifa" target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light text-burgundy font-bold text-xs sm:text-sm hover:brightness-110 transition shadow-lg">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>نیشاندانی شوێن لەسەر نەخشە</span>
+                    </a>
+                </section>
+
+            </div>
+
+            <!-- CONTROLS AND INDICATORS -->
+            <div class="flex items-center justify-between pt-6 border-t border-gold/20 mt-4">
+                
+                <!-- Previous Button -->
+                <button onclick="prevSlide()" class="w-10 h-10 rounded-full glass-card hover:bg-gold/20 flex items-center justify-center text-gold transition border border-gold/30">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <!-- Slide Indicators / Dots -->
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <button onclick="goToSlide(0)" class="dot w-3 h-3 rounded-full bg-gold/30 transition-all duration-300"></button>
+                    <button onclick="goToSlide(1)" class="dot w-3 h-3 rounded-full bg-gold/30 transition-all duration-300"></button>
+                    <button onclick="goToSlide(2)" class="dot w-3 h-3 rounded-full bg-gold/30 transition-all duration-300"></button>
+                </div>
+
+                <!-- Pause/Play Toggle Button -->
+                <button id="play-pause-btn" onclick="toggleAutoPlay()" class="w-10 h-10 rounded-full glass-card hover:bg-gold/20 flex items-center justify-center text-gold transition border border-gold/30" title="وەستاندن / دەستپێکردن">
+                    <i id="play-icon" class="fa-solid fa-pause"></i>
+                </button>
+
+                <!-- Next Button -->
+                <button onclick="nextSlide()" class="w-10 h-10 rounded-full glass-card hover:bg-gold/20 flex items-center justify-center text-gold transition border border-gold/30">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-4 text-xs text-gold-light/40 z-10 font-light">
+        بەهیوای بەختەوەری بۆ دێرین & هاشم ❤️
+    </footer>
+
+    <!-- Audio Element (Ambient background synth audio track) -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-113527.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /* Global State Variables */
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let autoPlayInterval = null;
+        let isPlaying = true;
+        const slideDuration = 6000; // 6 seconds per slide
+        let isMusicPlaying = false;
+
+        /* DOM Elements */
+        const dots = document.querySelectorAll('.dot');
+        const progressBar = document.getElementById('progress-bar');
+        const playIcon = document.getElementById('play-icon');
+        const bgMusic = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-btn');
+
+        window.onload = function () {
+            createBackgroundSparks();
+            startAutoPlay();
+            startCountdown();
+            updateSlides();
+            
+            // Touch swipe handling
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const slideArea = document.querySelector('main');
+
+            slideArea.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            slideArea.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, {passive: true});
+
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    // Swiped Left -> Next Slide
+                    nextSlide();
+                }
+                if (touchEndX > touchStartX + 50) {
+                    // Swiped Right -> Previous Slide
+                    prevSlide();
+                }
+            }
+        };
+
+        /* Function to update UI for active slide */
+        function updateSlides() {
+            for (let i = 0; i < totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                    dots[i].classList.add('bg-gold', 'w-8');
+                    dots[i].classList.remove('bg-gold/30', 'w-3');
+                } else {
+                    slide.classList.remove('active');
+                    dots[i].classList.remove('bg-gold', 'w-8');
+                    dots[i].classList.add('bg-gold/30', 'w-3');
+                }
+            }
+            resetProgressBar();
+        }
+
+        /* Next Slide */
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides();
+            if (isPlaying) restartAutoPlay();
+        }
+
+        /* Previous Slide */
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides();
+            if (isPlaying) restartAutoPlay();
+        }
+
+        /* Go to specific slide */
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+            if (isPlaying) restartAutoPlay();
+        }
+
+        /* Auto-play Timer Management */
+        function startAutoPlay() {
+            isPlaying = true;
+            playIcon.className = "fa-solid fa-pause";
+            autoPlayInterval = setInterval(nextSlide, slideDuration);
+            resetProgressBar();
+        }
+
+        function stopAutoPlay() {
+            isPlaying = false;
+            playIcon.className = "fa-solid fa-play";
+            clearInterval(autoPlayInterval);
+            progressBar.style.width = '0%';
+        }
+
+        function toggleAutoPlay() {
+            if (isPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+
+        function restartAutoPlay() {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = setInterval(nextSlide, slideDuration);
+            resetProgressBar();
+        }
+
+        function resetProgressBar() {
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            setTimeout(() => {
+                if (isPlaying) {
+                    progressBar.style.transition = `width ${slideDuration}ms linear`;
+                    progressBar.style.width = '100%';
+                }
+            }, 50);
+        }
+
+        /* Background Spark Particle Animation */
+        function createBackgroundSparks() {
+            const container = document.getElementById('sparks-container');
+            const sparkCount = 25;
+
+            for (let i = 0; i < sparkCount; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                
+                // Randomize sizes and speeds
+                const size = Math.random() * 4 + 2;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 8;
+                const duration = Math.random() * 5 + 5;
+
+                spark.style.width = `${size}px`;
+                spark.style.height = `${size}px`;
+                spark.style.left = `${left}%`;
+                spark.style.bottom = `-20px`;
+                spark.style.animationDelay = `${delay}s`;
+                spark.style.animationDuration = `${duration}s`;
+
+                container.appendChild(spark);
+            }
+        }
+
+        /* Music Toggle Function */
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicBtn.classList.remove('bg-gold/20', 'border-gold');
+                document.getElementById('music-text').textContent = 'دەنگ';
+            } else {
+                bgMusic.play().then(() => {
+                    musicBtn.classList.add('bg-gold/20', 'border-gold');
+                    document.getElementById('music-text').textContent = 'وەستاندن';
+                }).catch(err => {
+                    console.log("Audio play blocked by browser policy", err);
+                });
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        /* Custom User Photo Upload Handling */
+        function loadUserPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('wedding-photo').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        /* Countdown Timer Logic for 12-06-2026 19:00 */
+        function startCountdown() {
+            const eventDate = new Date("June 12, 2026 19:00:00").getTime();
+
+            function updateTimer() {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+
+                if (distance < 0) {
+                    document.getElementById("countdown").innerHTML = "<span class='text-gold font-bold'>ئاهەنگەکە دەستی پێکردووە! 🎉</span>";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("cd-days").textContent = days.toString().padStart(2, '0');
+                document.getElementById("cd-hours").textContent = hours.toString().padStart(2, '0');
+                document.getElementById("cd-minutes").textContent = minutes.toString().padStart(2, '0');
+                document.getElementById("cd-seconds").textContent = seconds.toString().padStart(2, '0');
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+    </script>
+</body>
+</html>
